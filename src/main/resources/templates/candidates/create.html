@@ -36,20 +36,19 @@
         <form class="mt-3">
             <div class="mb-3">
                 <label class="form-label" for="title"><b>Название</b></label>
-                <input class="form-control" id="title"
-                       placeholder="Предлагамая должность, например, Ведущий Java разработчик"
+                <input class="form-control" id="title" placeholder="Ваша должность, например, Ведущий Java разработчик"
                        type="text">
             </div>
             <div class="mb-3">
                 <label class="form-label" for="description"><b>Описание</b></label>
-                <textarea class="form-control" id="description" placeholder="Опишите требования к кандидату"
+                <textarea class="form-control" id="description" placeholder="Опишите опыт работы"
                           rows="25"></textarea>
             </div>
             <div class="mb-3 row">
                 <div class="col-6"></div>
                 <div class="col-6">
                     <div class="row">
-                        <div class="col-6"><a class="btn btn-danger w-100" th:href="@{/vacancies}">Отмена</a></div>
+                        <div class="col-6"><a class="btn btn-danger w-100" th:href="@{/candidates}">Отмена</a></div>
                         <div class="col-6">
                             <button class="btn btn-primary w-100" type="submit">Сохранить</button>
                         </div>
