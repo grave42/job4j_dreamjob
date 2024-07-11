@@ -7,26 +7,29 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Candidate;
-import ru.job4j.dreamjob.repository.CandidateRepository;
+import ru.job4j.dreamjob.service.CandidateService;
 import ru.job4j.dreamjob.service.CityService;
 
 @Controller
 @RequestMapping("/candidates")
 public class CandidateController {
 
-    private final CandidateRepository candidateRepository;
+    private final CandidateService candidateService;
 
     private final CityService cityService;
 
-    public CandidateController(CandidateRepository candidateRepository, CityService cityService) {
-        this.candidateRepository = candidateRepository;
+    public CandidateController(CandidateService candidateService, CityService cityService) {
+        this.candidateService = candidateService;
         this.cityService = cityService;
     }
 
     @GetMapping
     public String getAll(Model model) {
-        model.addAttribute("candidates", candidateRepository.findAll());
+        model.addAttribute("candidates", candidateService.findAll());
         return "candidates/list";
     }
 
@@ -37,14 +40,19 @@ public class CandidateController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Candidate candidate) {
-        candidateRepository.save(candidate);
-        return "redirect:/candidates";
+    public String create(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
+        try {
+            candidateService.save(candidate, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            return "redirect:/candidates";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
+            return "errors/404";
+        }
     }
 
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
-        var candidateOptional = candidateRepository.findById(id);
+        var candidateOptional = candidateService.findById(id);
         if (candidateOptional.isEmpty()) {
             model.addAttribute("message", "Кандидат с указанным идентификатором не найден");
             return "errors/404";
@@ -55,18 +63,23 @@ public class CandidateController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Candidate candidate, Model model) {
-        var isUpdated = candidateRepository.update(candidate);
-        if (!isUpdated) {
-            model.addAttribute("message", "Кандидат с указанным идентификатором не найден");
+    public String update(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
+        try {
+            var isUpdated = candidateService.update(candidate, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            if (!isUpdated) {
+                model.addAttribute("message", "Кандидат с указанным идентификатором не найден\"");
+                return "errors/404";
+            }
+            return "redirect:/candidates";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
             return "errors/404";
         }
-        return "redirect:/candidates";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        var isDeleted = candidateRepository.deleteById(id);
+        var isDeleted = candidateService.deleteById(id);
         if (!isDeleted) {
             model.addAttribute("message", "Кандидат с указанным идентификатором не найден");
             return "errors/404";

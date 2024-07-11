@@ -20,8 +20,20 @@
 <div class="container-fluid p-0">
     <header th:insert="blocks/header :: header"></header>
     <div class="container">
-        <form class="mt-3" method="post" th:action="@{/candidates/update}" th:object="${candidate}">
+        <form class="mt-3" enctype="multipart/form-data" method="post" th:action="@{/candidates/update}"
+              th:object="${candidate}">
             <input name="id" th:field="*{id}" type="hidden">
+            <input name="fileId" th:field="*{fileId}" type="hidden">
+            <div class="row mb-3">
+                <div class="col-3">
+                    <div class="mb-3">
+                        <img alt="No image" class="w-100" th:src="@{/files/{fileId}(fileId=*{fileId})}">
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control form-control-sm w-100" id="formFile" name="file" type="file">
+                    </div>
+                </div>
+            </div>
             <div class="mb-3">
                 <label class="form-label" for="name"><b>Имя</b></label>
                 <input class="form-control" id="name" name="name" placeholder="Ваше Ф.И.О" th:field="*{name}"
