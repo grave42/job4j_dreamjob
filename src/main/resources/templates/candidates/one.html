@@ -33,6 +33,14 @@
                           rows="25"
                           th:field="*{description}"></textarea>
             </div>
+            <div class="mb-3">
+                <label for="city"><b>Город</b></label>
+                <select class="form-control" id="city" name="cityId">
+                    <option th:each="city : ${cities}" th:field="*{cityId}" th:selected="${city.id==cityId}" th:text="${city.name}"
+                            th:value="${city.id}"></option>
+                </select>
+            </div>
+
             <div class="mb-3 row">
                 <div class="col-6"></div>
                 <div class="col-6">
