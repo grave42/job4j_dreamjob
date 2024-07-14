@@ -26,10 +26,6 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(Model model, @ModelAttribute User user) {
-        if (userService.findByEmailAndPassword(user.getEmail(), user.getPassword()).isPresent()) {
-            model.addAttribute("message", "Пользователь с такой почтой уже существует");
-            return "errors/404";
-        }
         userService.save(user);
         return "redirect:/vacancies";
     }

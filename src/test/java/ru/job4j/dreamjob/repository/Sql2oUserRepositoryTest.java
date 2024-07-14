@@ -2,7 +2,6 @@ package ru.job4j.dreamjob.repository;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.sql2o.Sql2oException;
 import ru.job4j.dreamjob.configuration.DatasourceConfiguration;
 import ru.job4j.dreamjob.model.User;
 
@@ -10,7 +9,7 @@ import java.util.Properties;
 
 import static java.util.Optional.empty;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Sql2oUserRepositoryTest {
 
@@ -35,10 +34,10 @@ class Sql2oUserRepositoryTest {
 
     @Test
     public void whenSaveThenGetSame() {
-        var user = repository.save(new User(0, "email22", "password", "name"));
+        var user = repository.save(new User(0, "email2", "password", "name"));
         var savedUser = repository.findByEmailAndPassword(user.get().getEmail(), user.get().getPassword());
 
-        assertThat(savedUser).usingRecursiveComparison().isEqualTo(user);
+        assertThat(savedUser.get()).usingRecursiveComparison().isEqualTo(user.get());
     }
 
     @Test
@@ -52,7 +51,8 @@ class Sql2oUserRepositoryTest {
     @Test
     public void whenSaveWithSameEmailThenThrowsException() {
         repository.save(new User(1, "emailaaa", "password3", "name3"));
-        assertThrows(Sql2oException.class, () -> repository.save(new User(2, "emailaaa", "password2", "name2")));
+        var user2 = repository.save(new User(2, "emailaaa", "password2", "name2"));
+        assertTrue(user2.isEmpty());
     }
 
 }
