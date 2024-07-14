@@ -34,7 +34,7 @@ class Sql2oUserRepositoryTest {
 
     @Test
     public void whenSaveThenGetSame() {
-        var user = repository.save(new User(0, "email2", "password", "name"));
+        var user = repository.save(new User("email2", "password", "name"));
         var savedUser = repository.findByEmailAndPassword(user.get().getEmail(), user.get().getPassword());
 
         assertThat(savedUser.get()).usingRecursiveComparison().isEqualTo(user.get());
@@ -42,7 +42,7 @@ class Sql2oUserRepositoryTest {
 
     @Test
     public void whenDontSaveThenNothingFound() {
-        var user = new User(0, "email4", "password4", "name4");
+        var user = new User("email4", "password4", "name4");
         var savedUser = repository.findByEmailAndPassword(user.getEmail(), user.getPassword());
 
         assertThat(savedUser.equals(empty()));
@@ -50,8 +50,8 @@ class Sql2oUserRepositoryTest {
 
     @Test
     public void whenSaveWithSameEmailThenThrowsException() {
-        repository.save(new User(1, "emailaaa", "password3", "name3"));
-        var user2 = repository.save(new User(2, "emailaaa", "password2", "name2"));
+        repository.save(new User("emailaaa", "password3", "name3"));
+        var user2 = repository.save(new User("emailaaa", "password2", "name2"));
         assertTrue(user2.isEmpty());
     }
 
